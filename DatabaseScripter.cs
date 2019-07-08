@@ -108,7 +108,7 @@ GO
                 {
                     try
                     {
-                        GenerateDatabaseScript(db, outputDirectory, purgeDirectory, scriptData, verbose, scriptProperties);
+                        GenerateDatabaseScript(db, outputDirectory, purgeDirectory, scriptData, verbose, scriptProperties, scriptAllDatabases);
                     }
                     catch (Exception e)
                     {
@@ -118,17 +118,21 @@ GO
             }
             else
                 GenerateDatabaseScript(s.Databases[connection.Database], outputDirectory, purgeDirectory,
-                    scriptData, verbose, scriptProperties);
+                    scriptData, verbose, scriptProperties, scriptAllDatabases);
 
         }
 
         private void GenerateDatabaseScript(Database db, string outputDirectory, bool purgeDirectory,
-                           bool scriptData, bool verbose, bool scriptProperties)
+                           bool scriptData, bool verbose, bool scriptProperties, bool appendDbNameToPath)
         {
             this._ScriptProperties = scriptProperties;
 
             // Output folder
-            outputDirectory = Path.Combine(outputDirectory, db.Name);
+            if (appendDbNameToPath)
+            {
+                outputDirectory = Path.Combine(outputDirectory, db.Name);
+            }
+
             if (Directory.Exists(outputDirectory))
             {
                 if (purgeDirectory) Program.PurgeDirectory(outputDirectory, "*.sql");
